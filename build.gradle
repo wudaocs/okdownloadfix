@@ -2,10 +2,18 @@ subprojects {
     buildscript {
         repositories {
             mavenCentral()
+            maven { url 'https://maven.aliyun.com/repository/central'}
+            maven { url 'https://maven.aliyun.com/repository/jcenter'}
+            maven { url 'https://maven.aliyun.com/repository/public'}
+            maven { url 'https://maven.aliyun.com/repository/google'}
         }
     }
     repositories {
         mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/central'}
+        maven { url 'https://maven.aliyun.com/repository/jcenter'}
+        maven { url 'https://maven.aliyun.com/repository/public'}
+        maven { url 'https://maven.aliyun.com/repository/google'}
     }
 
     group = GROUP
@@ -18,6 +26,10 @@ buildscript {
     repositories {
         jcenter()
         google()
+        maven { url 'https://maven.aliyun.com/repository/central'}
+        maven { url 'https://maven.aliyun.com/repository/jcenter'}
+        maven { url 'https://maven.aliyun.com/repository/public'}
+        maven { url 'https://maven.aliyun.com/repository/google'}
     }
     dependencies {
         classpath 'com.liulishuo.okcheck:gradle:0.2.3'
@@ -33,6 +45,10 @@ allprojects {
     repositories {
         jcenter()
         google()
+        maven { url 'https://maven.aliyun.com/repository/central'}
+        maven { url 'https://maven.aliyun.com/repository/jcenter'}
+        maven { url 'https://maven.aliyun.com/repository/public'}
+        maven { url 'https://maven.aliyun.com/repository/google'}
     }
 
     okcheck {
