@@ -12,7 +12,8 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.liulishuo.okdownload.sample"
+        applicationId "com.tpln.sample"
+//        applicationId "com.liulishuo.okdownload.sample"
         // using 19, because we demo for content-uri(CATEGORY_OPENABLE)
         minSdkVersion 19
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -69,7 +70,7 @@ dependencies {
     testImplementation dep.junit
     implementation project(':okdownload')
     implementation project(':sqlite')
-    implementation project(':okhttp')
+//    implementation project(':okhttp')
     implementation project(':filedownloader')
     implementation project(':kotlin')
 

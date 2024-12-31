@@ -16,8 +16,8 @@ subprojects {
         maven { url 'https://maven.aliyun.com/repository/google'}
     }
 
-    group = GROUP
-    version = VERSION_NAME
+//    group = GROUP
+//    version = VERSION_NAME
 }
 
 apply from: rootProject.file('gradle/dependencies.gradle')

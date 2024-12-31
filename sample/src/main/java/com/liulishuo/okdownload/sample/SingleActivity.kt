@@ -77,13 +77,17 @@ class SingleActivity : BaseSampleActivity() {
     }
 
     private fun initTask() {
+        // https://ee-vod-cdn.tope365.com/english_audio_visual/877/resource_address/reading/0/877_3_0_1.json
+        // https://ee-vod-cdn.tope365.com/english_audio_visual/876/resource_address/reading/0/876_3_0_1.json
         val filename = "single-test"
-        val url = "https://cdn.llscdn.com/yy/files/xs8qmxn8-lls-LLS-5.8-800-20171207-111607.apk"
+        val url = "https://ee-vod-cdn.tope365.com/english_audio_visual/877/resource_address/reading/0/877_3_0_1.json"
+//        val url = "http://devenglish.oss.tope365.com/qa/heart-talk/habit/2024-12-31/1873106839205916674.json"
         val parentFile = DemoUtil.getParentFile(this)
         task = DownloadTask.Builder(url, parentFile)
             .setFilename(filename)
             // the minimal interval millisecond for callback progress
             .setMinIntervalMillisCallbackProcess(16)
+            .setConnectionCount(5)
             // ignore the same task has already completed in the past.
             .setPassIfAlreadyCompleted(false)
             .build()
@@ -158,10 +162,10 @@ class SingleActivity : BaseSampleActivity() {
             // remove mark
             task.tag = null
             if (cause == EndCause.COMPLETED) {
-                val realMd5 = fileToMD5(task.file!!.absolutePath)
-                if (!realMd5!!.equals("f836a37a5eee5dec0611ce15a76e8fd5", ignoreCase = true)) {
-                    Log.e(TAG, "file is wrong because of md5 is wrong $realMd5")
-                }
+//                val realMd5 = fileToMD5(task.file!!.absolutePath)
+//                if (!realMd5!!.equals("f836a37a5eee5dec0611ce15a76e8fd5", ignoreCase = true)) {
+//                    Log.e(TAG, "file is wrong because of md5 is wrong $realMd5")
+//                }
             }
             realCause?.let {
                 Log.e(TAG, "download error", it)

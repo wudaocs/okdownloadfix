@@ -32,7 +32,8 @@ dependencies {
     implementation dep.supportAnnotations
 }
 
-apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
+apply from: rootProject.file('gradle/gradle-maven.gradle')
+//apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
 if (hasProperty("isCI")) {
     apply from: rootProject.file('gradle/codecov.gradle')
 }

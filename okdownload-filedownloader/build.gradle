@@ -20,6 +20,12 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+    defaultConfig {
+        versionName VERSION_NAME as String
+        minSdkVersion rootProject.ext.minSdkVersion
+    }
+
+
     compileOptions {
         sourceCompatibility rootProject.ext.sourceCompatibilityVersion
         targetCompatibility rootProject.ext.targetCompatibilityVersion
@@ -29,10 +35,8 @@ android {
         preDexLibraries = !rootProject.ext.isCi
     }
 
-    defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-    }
 }
+
 
 dependencies {
     testImplementation dep.junit
@@ -50,4 +54,8 @@ dependencies {
     compileOnly dep.findbugsAnnotations
 }
 
-apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
+apply from: rootProject.file('gradle/gradle-maven.gradle')
+//apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
+if (hasProperty("isCI")) {
+    apply from: rootProject.file('gradle/codecov.gradle')
+}

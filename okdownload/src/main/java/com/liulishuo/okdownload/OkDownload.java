@@ -35,7 +35,8 @@ import com.liulishuo.okdownload.core.file.ProcessFileStrategy;
 @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
 public class OkDownload {
 
-    @SuppressLint("StaticFieldLeak") static volatile OkDownload singleton;
+    @SuppressLint("StaticFieldLeak")
+    static volatile OkDownload singleton;
 
     private final DownloadDispatcher downloadDispatcher;
     private final CallbackDispatcher callbackDispatcher;
@@ -47,7 +48,8 @@ public class OkDownload {
 
     private final Context context;
 
-    @Nullable DownloadMonitor monitor;
+    @Nullable
+    DownloadMonitor monitor;
 
     OkDownload(Context context, DownloadDispatcher downloadDispatcher,
                CallbackDispatcher callbackDispatcher, DownloadStore store,
@@ -66,28 +68,49 @@ public class OkDownload {
         this.downloadDispatcher.setDownloadStore(Util.createRemitDatabase(store));
     }
 
-    public DownloadDispatcher downloadDispatcher() { return downloadDispatcher; }
+    public DownloadDispatcher downloadDispatcher() {
+        return downloadDispatcher;
+    }
 
-    public CallbackDispatcher callbackDispatcher() { return callbackDispatcher; }
+    public CallbackDispatcher callbackDispatcher() {
+        return callbackDispatcher;
+    }
 
-    public BreakpointStore breakpointStore() { return breakpointStore; }
+    public BreakpointStore breakpointStore() {
+        return breakpointStore;
+    }
 
-    public DownloadConnection.Factory connectionFactory() { return connectionFactory; }
+    public DownloadConnection.Factory connectionFactory() {
+        return connectionFactory;
+    }
 
-    public DownloadOutputStream.Factory outputStreamFactory() { return outputStreamFactory; }
+    public DownloadOutputStream.Factory outputStreamFactory() {
+        return outputStreamFactory;
+    }
 
-    public ProcessFileStrategy processFileStrategy() { return processFileStrategy; }
+    public ProcessFileStrategy processFileStrategy() {
+        return processFileStrategy;
+    }
 
-    public DownloadStrategy downloadStrategy() { return downloadStrategy; }
+    public DownloadStrategy downloadStrategy() {
+        return downloadStrategy;
+    }
 
-    public Context context() { return this.context; }
+    public Context context() {
+        return this.context;
+    }
 
     public void setMonitor(@Nullable DownloadMonitor monitor) {
         this.monitor = monitor;
     }
 
-    @Nullable public DownloadMonitor getMonitor() {
+    @Nullable
+    public DownloadMonitor getMonitor() {
         return monitor;
+    }
+
+    public static void setUp(Context context) {
+        OkDownloadProvider.context = context;
     }
 
     public static OkDownload with() {
