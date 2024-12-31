@@ -1,0 +1,252 @@
+/*
+ * Copyright 2013 Chris Banes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+//version = VERSION_NAME
+//group = GROUP
+
+tasks.withType(Javadoc) {
+    enabled = false //Disable the task of 'generating javadoc'
+    options.encoding = "UTF-8"
+}
+
+def PROJ_POM_NAME = project.property('PROJ_ARTIFACTID')
+def PROJ_WEBSITEURL = ''
+def PROJ_VCSURL = ''
+def PROJ_DESCRIPTION = ''
+def PROJ_LICENCE_NAME = ''
+def PROJ_LICENCE_URL = ''
+def PROJ_LICENCE_DEST = ''
+def DEVELOPER_ID = ''
+def DEVELOPER_NAME = ''
+def DEVELOPER_EMAIL = ''
+
+def isReleaseBuild() {
+    return project.property('PROJ_VERSION').contains("SNAPSHOT") == false
+}
+
+def getReleaseRepositoryUrl() {
+    return project.property('RELEASE_REPOSITORY_URL')
+}
+
+def getSnapshotRepositoryUrl() {
+    return project.property('SNAPSHOT_REPOSITORY_URL')
+}
+
+def getRepositoryUsername() {
+    Properties properties = new Properties()
+    properties.load(project.file('../local.properties').newDataInputStream())
+    return  properties.getProperty("USERNAME")
+}
+
+def getRepositoryPassword() {
+    Properties properties = new Properties()
+    properties.load(project.file('../local.properties').newDataInputStream())
+    return properties.getProperty("PASSWORD")
+}
+
+afterEvaluate { project ->
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                pom.groupId = project.property('PROJ_GROUP')
+                pom.artifactId = project.property('PROJ_ARTIFACTID')
+                pom.version = project.property('PROJ_VERSION')
+
+                repository(url: getReleaseRepositoryUrl()) {
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                }
+                snapshotRepository(url: getSnapshotRepositoryUrl()) {
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                }
+
+                pom.project {
+                    name PROJ_POM_NAME
+                    packaging project.property('POM_PACKAGING')
+                    description PROJ_DESCRIPTION
+                    url PROJ_WEBSITEURL
+
+                    scm {
+                        url PROJ_VCSURL
+                        connection DEVELOPER_EMAIL
+                        developerConnection DEVELOPER_EMAIL
+                    }
+
+                    licenses {
+                        license {
+                            name PROJ_LICENCE_NAME
+                            url PROJ_LICENCE_URL
+                            distribution PROJ_LICENCE_DEST
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id DEVELOPER_ID
+                            name DEVELOPER_NAME
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
+        sign configurations.archives
+    }
+
+    if (project.getPlugins().hasPlugin('com.android.application') ||
+            project.getPlugins().hasPlugin('com.android.library')) {
+        task install(type: Upload, dependsOn: assemble) {
+            repositories.mavenInstaller {
+                configuration = configurations.archives
+
+                pom.groupId = project.property('PROJ_GROUP')
+                pom.artifactId = project.property('PROJ_ARTIFACTID')
+                pom.version = project.property('PROJ_VERSION')
+
+                pom.project {
+                    name PROJ_POM_NAME
+                    packaging project.property('POM_PACKAGING')
+                    description PROJ_DESCRIPTION
+                    url PROJ_WEBSITEURL
+
+                    scm {
+                        url PROJ_VCSURL
+                        connection DEVELOPER_EMAIL
+                        developerConnection DEVELOPER_EMAIL
+                    }
+
+                    licenses {
+                        license {
+                            name PROJ_LICENCE_NAME
+                            url PROJ_LICENCE_URL
+                            distribution PROJ_LICENCE_DEST
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id DEVELOPER_ID
+                            name DEVELOPER_NAME
+                        }
+                    }
+                }
+            }
+        }
+
+        task androidSourcesJar(type: Jar) {
+            classifier = 'sources'
+            from android.sourceSets.main.java.source
+        }
+
+        task androidJavadocs(type: Javadoc) {
+            source = android.sourceSets.main.java.source
+            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        }
+
+        task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+            classifier = 'javadoc'
+            from androidJavadocs.destinationDir
+        }
+
+    } else {
+        install {
+            repositories.mavenInstaller {
+                pom.groupId = project.property('PROJ_GROUP')
+                pom.artifactId = project.property('PROJ_ARTIFACTID')
+                pom.version = project.property('PROJ_VERSION')
+
+                pom.project {
+                    name PROJ_POM_NAME
+                    packaging project.property('POM_PACKAGING')
+                    description PROJ_DESCRIPTION
+                    url PROJ_WEBSITEURL
+
+                    scm {
+                        url PROJ_VCSURL
+                        connection DEVELOPER_EMAIL
+                        developerConnection DEVELOPER_EMAIL
+                    }
+
+                    licenses {
+                        license {
+                            name PROJ_LICENCE_NAME
+                            url PROJ_LICENCE_URL
+                            distribution PROJ_LICENCE_DEST
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id DEVELOPER_ID
+                            name DEVELOPER_NAME
+                        }
+                    }
+                }
+            }
+        }
+
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+    }
+
+    if (JavaVersion.current().isJava8Compatible()) {
+        allprojects {
+            tasks.withType(Javadoc) {
+                options.addStringOption('Xdoclint:none', '-quiet')
+            }
+        }
+    }
+
+    artifacts {
+        if (!isReleaseBuild()){
+//            if (project.getPlugins().hasPlugin('com.android.application') ||
+//                    project.getPlugins().hasPlugin('com.android.library')) {
+                archives androidSourcesJar
+                archives androidJavadocsJar
+//            } else {
+//                archives sourcesJar
+//                archives javadocJar
+//            }
+        }
+    }
+}
+
+assemble.doLast {
+    copy {
+        def fileName = "${project.name}.jar"
+        delete "build/libs/${project.name}.jar"
+        println 'copy assemble'
+        from('build/intermediates/aar_main_jar/release/classes.jar')
+        into('build/libs/')
+        rename{
+            fileName
+        }
+    }
+}
